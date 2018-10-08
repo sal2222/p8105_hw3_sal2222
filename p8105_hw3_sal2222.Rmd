@@ -59,7 +59,7 @@ brfss %>%
 
 ```
 
-In 2002, 7 locations were observed in *Connecticut, Florida, and North Carolina*.  
+In 2002, 7 locations were observed in **Connecticut, Florida, and North Carolina**.    
 
 
 
@@ -69,8 +69,9 @@ In 2002, 7 locations were observed in *Connecticut, Florida, and North Carolina*
 brfss %>% 
   group_by(state, year) %>% 
   summarise(number = n()) %>% 
-  ggplot(aes(x = year, y = number, group = state, color = state)) +
-    geom_line() +
+  ggplot(aes(x = year, y = number)) +
+    geom_line(aes(color = state, alpha = 0.5)) +
+    geom_smooth(method = "loess", se = TRUE) + 
     labs(
       title = "Locations observed by state, 2002-2010",
       x = "Year",
@@ -84,7 +85,10 @@ brfss %>%
     theme(legend.position = "none")
 ```
 
-This plot is useful for showing the general trend of locations by state from 2002 to 2010. However, it is very difficult to identify individual states, and a legend occupies too much space, if included.
+
+
+This plot is useful for showing the general trend of locations by state from 2002 to 2010. However, it is very difficult to identify individual states, and a legend for all of the states occupies too much space, if included. A loess smoothed conditional mean curve shows a very gradual increase in number of locations observed by state over this time period.  
+
 
 
 *Make a table showing, for the years 2002, 2006, and 2010, the mean and standard deviation of the proportion of “Excellent” responses across locations in NY State.*
@@ -101,10 +105,44 @@ brfss %>%
   
 ```
 
-The table above shows the mean and standard deviation of the proportion of “Excellent” responses across locations in NY State. Nothing in particular stands out from the results. The highest proportion of "Excellent" responses occurred in 2002 (24.0%) and the lowest occurred in 2007 (21.1%).
+
+The table above shows the mean and standard deviation of the proportion of “Excellent” responses across locations in NY State. Nothing in particular stands out from the results. The highest proportion of "Excellent" responses occurred in 2002 (24.0%) and the lowest occurred in 2007 (21.1%).   
 
 
 *For each year and state, compute the average proportion in each response category (taking the average across locations in a state). Make a five-panel plot that shows, for each response category separately, the distribution of these state-level averages over time*
+
+```{r BFRSS five panel plot, warning = FALSE}
+
+brfss %>% 
+  select(-county) %>% 
+  group_by(year, state) %>% 
+  summarise_all(funs(mean = "mean")) %>% 
+  gather(key = rating, value = mean_proportion, poor_mean:excellent_mean) %>%
+  mutate(rating = 
+      factor(rating, c("poor_mean", "fair_mean", "good_mean", "very_good_mean", "excellent_mean"))) %>% 
+  ggplot(aes(x = year, y = mean_proportion)) +
+    geom_line(aes(color = state, alpha = 0.5)) +
+    geom_smooth(method = "loess", se = TRUE) + 
+    facet_grid(~rating) + 
+    labs(
+      title = "Locations observed by state, 2002-2010",
+      x = "Year",
+      y = "Number of observations",
+      caption = "Data from BRFSS SMART 2010"
+    ) +
+    viridis::scale_color_viridis(
+      name = "State", 
+    discrete = TRUE
+    ) +
+    theme(legend.position = "none", 
+          axis.text.x = element_text(size = 5))
+
+```
+
+
+
+The five-panel plot above displays the average proportion in each response category in the BFRSS "Overall Health" topic, averaged across county-level regions in each state, with a loess smoothed conditional mean curve and 95% confidence level. We see the distribution of state-level averages over time from 2002 to 2008. "Very good" makes up the highest proportion of responses, followed by "good", "excellent", "fair", and lastly "poor". For the most part, the trend of responses remained consistent over time. The proportion of "very good" responses increases slightly, and "excellent" responses decrease slightly over this period.    
+
 
 
 
