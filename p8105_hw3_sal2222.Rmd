@@ -22,14 +22,15 @@ knitr::opts_chunk$set(
 theme_set(theme_bw() + theme(legend.position = "bottom"))
 ```
 
-# Problem 1
+# Problem 1: BRFSS
 
 
 I will load and format the Behavioral Risk Factors Surveillance System (BRFSS) for Selected Metropolitan Area Risk Trends (SMART) data from the p8105.datasets package.
 
-```{r load BRFSS}
+```{r load and clean BRFSS}
 
 data("brfss_smart2010")
+
 brfss <- brfss_smart2010 %>% 
   janitor::clean_names() %>%
   filter(topic == "Overall Health") %>%
@@ -141,12 +142,38 @@ brfss %>%
 
 
 
-The five-panel plot above displays the average proportion in each response category in the BFRSS "Overall Health" topic, averaged across county-level regions in each state, with a loess smoothed conditional mean curve and 95% confidence level. We see the distribution of state-level averages over time from 2002 to 2008. "Very good" makes up the highest proportion of responses, followed by "good", "excellent", "fair", and lastly "poor". For the most part, the trend of responses remained consistent over time. The proportion of "very good" responses increases slightly, and "excellent" responses decrease slightly over this period.    
+The five-panel plot above displays the average proportion in each response category in the BRFSS "Overall Health" topic, averaged across county-level regions in each state, with a loess smoothed conditional mean curve and 95% confidence level. We see the distribution of state-level averages over time from 2002 to 2008. "Very good" makes up the highest proportion of responses, followed by "good", "excellent", "fair", and lastly "poor". For the most part, the trend of responses remained consistent over time. The proportion of "very good" responses increases slightly, and "excellent" responses decrease slightly over this period.    
 
 
 
 
-#Problem 2
+#Problem 2: Instacart
+
+```{r load Instacart data}
+
+data("instacart")
+instacart
+
+```
+
+
+This Instacart Online Grocery Shopping 2017 dataset comes from an anonymized dataset with over 3 million online grocery orders from more than 200,000 Instacart users. This version of the data contains `r nrow(instacart)` observations of a product in an order. There are `r ncol(instacart)` variables in this dataset that describe order, product, and customer identifiers, the order in which the item was added to a user's cart, whether the product had been previously ordered by the user, the order sequence from the user, the hour and day of the week the order was placed, day since prior order, as well as product name, aisle, and department information.  
+
+
+
+
+*The goal is to do some exploration of this dataset. To that end, write a short description of the dataset, noting the size and structure of the data, describing some key variables, and giving illstrative examples of observations. Then, do or answer the following (commenting on the results of each):*
+
+*How many aisles are there, and which aisles are the most items ordered from?*
+
+
+*Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it.*
+
+
+*Make a table showing the most popular item aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”*
+
+
+*Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).*
 
 
 
@@ -154,4 +181,5 @@ The five-panel plot above displays the average proportion in each response categ
 
 
 
-#Problem 3
+
+#Problem 3: NY NOAA
