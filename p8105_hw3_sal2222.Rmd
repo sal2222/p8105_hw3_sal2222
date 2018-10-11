@@ -2,7 +2,9 @@
 title: "p8105_hw3_sal2222"
 author: "Stephen Lewandowski"
 date: "October 15, 2018"
-output: html_document
+output: 
+  github_document:
+    toc: true
 ---
 
 
@@ -154,23 +156,54 @@ The five-panel plot above displays the average proportion in each response categ
 data("instacart")
 instacart
 
+
 ```
 
 
-This Instacart Online Grocery Shopping 2017 dataset comes from an anonymized dataset with over 3 million online grocery orders from more than 200,000 Instacart users. This version of the data contains `r nrow(instacart)` observations of a product in an order. There are `r ncol(instacart)` variables in this dataset that describe order, product, and customer identifiers, the order in which the item was added to a user's cart, whether the product had been previously ordered by the user, the order sequence from the user, the hour and day of the week the order was placed, day since prior order, as well as product name, aisle, and department information.  
+This Instacart Online Grocery Shopping 2017 dataset comes from an anonymized dataset with over 3 million online grocery orders from more than 200,000 Instacart users. This version of the data contains `r nrow(instacart)` observations of products in the orders. There are `r ncol(instacart)` variables in this dataset that describe order, product, and customer identifiers, the order in which the item was added to a user's cart, whether the product had been previously ordered by the user, the order sequence from the user, the hour and day of the week the order was placed, day since prior order, as well as product name, aisle, and department information. Our data contains `r instacart %>% summarize(n_distinct = n_distinct(order_id))` unique orders for `r instacart %>% summarize(n_distinct = n_distinct(product_id))` unique products. The average number of items in an order was `r instacart %>% group_by(order_id) %>% summarize(n = n()) %>% summarize(mean = mean(n))`.   
 
-
-
-
-*The goal is to do some exploration of this dataset. To that end, write a short description of the dataset, noting the size and structure of the data, describing some key variables, and giving illstrative examples of observations. Then, do or answer the following (commenting on the results of each):*
 
 *How many aisles are there, and which aisles are the most items ordered from?*
+
+```{r instacart aisles}
+instacart %>% 
+  summarize(n_distinct = n_distinct(aisle_id))
+
+instacart %>%
+  group_by(aisle) %>% 
+  summarize(n = n()) %>% 
+  arrange(desc(n))
+
+```
+
+There are **134** aisles in the database. The most items are ordered from **Fresh Vegetables (150,609), Fresh Fruits (150,773), and Package Vegetables and Fruits (78,493)**. 
+Users seem to order healthy foods from this service.
 
 
 *Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it.*
 
 
+```{r plot items in aisles}
+instacart %>%
+ group_by(aisle_id) %>% 
+  summarize(n = n()) %>%
+  ggplot(aes(x = reorder(aisle_id, -n), y = n)) +
+    geom_bar(stat = "identity") +
+    labs(
+     title = "Number of items ordered in each Instacart aisle",
+      x = "Aisle ID",
+      y = "Number of items ordered",
+      caption = "Data from Instacart"
+    ) +
+    theme(axis.text.x = element_text(angle = 90, size = 6)) 
+
+```
+
+
+
 *Make a table showing the most popular item aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”*
+
+
 
 
 *Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).*
