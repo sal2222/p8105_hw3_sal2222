@@ -151,12 +151,11 @@ The five-panel plot above displays the average proportion in each response categ
 
 #Problem 2: Instacart
 
+First, I will load the Instacart data.
 ```{r load Instacart data}
-
 data("instacart")
+
 instacart
-
-
 ```
 
 
@@ -260,8 +259,52 @@ instacart %>%
 The table above displays the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream were ordered on each day of the week. The mean hour values are based on a 24 hour clock, and represent fraction of an hour, rather than hours and minutes. From the `order_dow` variable, day `0` was assumed to represent Sunday. We see that every day except for Friday, the ice cream is ordered later in the day than the apples. Lunchtime and late afternoon are the most popular order times, except for the Friday morning coffee ice cream.     
 
 
-
-
-
-
 #Problem 3: NY NOAA
+
+I will load the NY NOAA data from the p8105.datasets package.
+
+```{r load NOAA data}
+data("ny_noaa")
+ny_noaa
+```
+
+This dataset contains measurements from all New York state weather stations in the Global Historical Climatology Network (GHCN) from January 1, 1981 through December 31, 2010. It includes variables for  maximum and minimum daily temperatures, along with daily precipitation, snowfall, and snow depth. The five measurement variables are grouped by station identification number and date, for a total of 7 variables. There are a total of `r nrow(ny_noaa)` daily observations in this dataset. The units of snowfall and snow depth are in millimeters. Precipitation is in tenths of millimeters, and temperatures are in tenths of degrees Celsius.
+
+Missing data, depending on the variable of interest, can be extensive. Approximately half of the stations only report precipitation. There are `r ny_noaa %>%  complete.cases() %>% sum()`  complete observations with all five measurements. There are `r is.na(ny_noaa$prcp) %>% sum()` missing precipitation measurements, `r is.na(ny_noaa$snow) %>% sum()` missing snowfall measurements, `r is.na(ny_noaa$snwd) %>% sum()` missing snow depth measurements, `r is.na(ny_noaa$tmax) %>% sum()` maximum temperature measurements, and `r is.na(ny_noaa$tmin) %>% sum()` minimum temperature measurements.     
+
+
+I will now clean the data and create separate variables for year, month, and day. I will also convert units of precipitation to millimeters and temperatures to degrees Celsius. To execute the temperature unit conversions, it was necessary to change the class from character to numeric. 
+
+```{r clean noaa data}
+ny_noaa <- ny_noaa %>%
+  separate(., "date", c("year", "month", "day"), sep = "-") %>%
+  mutate(tmax = as.numeric(tmax),
+            tmin = as.numeric(tmin),
+            prcp = prcp / 10, 
+            tmax = tmax / 10,
+            tmin = tmin / 10)
+
+ny_noaa
+```
+
+*For snowfall, what are the most commonly observed values? Why?*  
+
+```{r snowfall}
+ny_noaa %>% 
+   group_by(snow) %>% 
+   summarize(n = n()) %>% 
+   top_n(10) %>% 
+   arrange(desc(n))
+  
+```
+
+The most commonly observed value is **0 mm**, with over 2 million observations. This makes sense in New York State due to it seasonal weather. Also, even if there is light snow, the snowfall may not be measurable. Following observations where snowfall was not reported, the next most commonly observed values were **25 mm, 13 mm, and 51 mm**.  As the snowfall was likely measured in inches, these common values correspond to 1 inch, half inch, and 2 inch reports. 
+
+
+*Make a two-panel plot showing the average max temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?* 
+
+
+
+
+
+*Make a two-panel plot showing (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); and (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.*
