@@ -342,7 +342,7 @@ There is not an apparant long-term trend in the January or July mean maximum tem
 
 *Make a two-panel plot showing (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option);and (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.*
 
-```{r noaa two panel full data, warning = FALSE, fig.height = 12}
+```{r noaa two panel full data, warning = FALSE, fig.height = 30, fig.asp = 1.2}
 
 tmax_tmin_p <- ny_noaa %>% 
   select(-(c("prcp", "snow", "snwd"))) %>% 
@@ -350,7 +350,7 @@ tmax_tmin_p <- ny_noaa %>%
     geom_hex(bins = 50) +
     geom_smooth() +
     labs(
-      title = "(i) Hexagonal heatmap of New York maximum vs. minimum daily temperatures, 1981-2010",
+      title = "(i) Heatmap of maximum vs. minimum daily temperatures, 1981-2010",
       x = "Minimum daily temperature (deg C)",
       y = "Maximum daily temperature (deg C)",
       caption = "Data from the rnoaa package") +
@@ -376,7 +376,7 @@ ggsave(filename = "tmax_tmin_snow_p.png", plot = tmax_tmin_snow_p)
 
 ```
 
-In the first panel (i), we see maximum daily temperatures plotted against minimum daily temperatures for the entire New York dataset in a hexagonal heatmap with a GAM smoothed conditional mean curve. The aggregated relationshp appears mostly linear in the middle where most of the observations occur, but shows a soft "S-shape" at the extremes. Two hotspots appear in the central band at maximum temperatures of approximately 5 degrees C and 27 degrees C (corresponding to 0 and 16 degreee C minimum temperatures.)  
+In the first panel (i), we see maximum daily temperatures plotted against minimum daily temperatures for the entire New York dataset in a hexagonal heatmap with a GAM smoothed conditional mean curve. The aggregated relationshp appears mostly linear in the middle where most of the observations occur, but shows a minor "S-shape" at the extremes. Two hotspots appear in the central band at maximum temperatures of approximately 5 degrees C and 27 degrees C (corresponding to 0 and 16 degreee C minimum temperatures.)  
 
 In the second panel (ii), we see a violin plot with quartile lines of the distribution of snowfall values greater than 0 and less than 100 from 1981 to 2010. The snowfall distribution only appears to vary slightly year-to-year, with no clear long-term trends from this selection. In each year, we observe four nodes of common observations, corresponding to half-inch, one inch, two inch, and three inch recordings. 
 
