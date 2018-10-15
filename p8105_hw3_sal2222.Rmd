@@ -303,7 +303,7 @@ The most commonly observed value is **0 mm**, with over 2 million observations. 
 
 *Make a two-panel plot showing the average max temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?* 
 
-```{r ny noaa 2 panel plot}
+```{r ny noaa 2 panel plot, warning = FALSE}
 
 ny_noaa %>% 
   filter(month == c("01", "07")) %>%
@@ -320,18 +320,51 @@ ny_noaa %>%
     labs(
       title = "New York average maximum temperatures",
       x = "Year",
-      y = "Mean maxiumum daily temperature (deg C)",
+      y = "Mean maximum daily temperature (deg C)",
       caption = "Data from the rnoaa package"
     ) + 
     scale_x_continuous(breaks = c(1980, 1985, 1990, 1995, 2000, 2005, 2010)) +
     theme(legend.position = "none")
   
-  
+```
 
+There is not an apparant long-term trend in the January or July mean maximum temperatures over the observed thirty years. Oscillations are observed over two to four year periods. There is more year-to-year and within-year variability in the January data compared to July. Outliers are more apparant in the July panel, and exhibit lower than expected temperatures. The largest outlier is seen in July 1988. Other outlier points occur in July 1984 and July 2004.
+
+
+*Make a two-panel plot showing (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option);and (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.*
+
+```{r noaa two panel full data, warning = FALSE}
+
+ny_noaa %>% 
+  select(-(c("prcp", "snow", "snwd"))) %>% 
+    ggplot(aes(x = tmin, y = tmax)) +
+    geom_hex(bins = 50) +
+    geom_smooth() +
+    labs(
+      title = "Hexagonal heatmap of New York maximum vs. minimum daily temperatures, 1981-2010",
+      x = "Minimum daily temperature (deg C)",
+      y = "Maximum daily temperature (deg C)",
+      caption = "Data from the rnoaa package") +
+    viridis::scale_fill_viridis()
+
+
+ny_noaa %>% 
+  select(-(c("prcp", "snwd", "tmax", "tmin"))) %>% 
+  filter(snow > 0 & snow < 100) %>%
+  ggplot(aes(x = year, y = snow)) +
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) +
+    labs(
+      title = "Violin plot of New York distribution of snowfall, 1981-2010",
+      x = "Year",
+      y = "Snowfall (mm)",
+      caption = "Data from the rnoaa package") +
+    theme(axis.text.x = element_text(angle = 90, size = 10)) 
 
 ```
 
+In the first panel, we see maximum daily temperatures plotted against minimum daily temperatures for the entire New York dataset in a hexagonal heatmap with a GAM smoothed conditional mean curve. The aggregated relationshp appears mostly linear in the middle where most of the observations occur, but shows a soft "S-shape" at the extremes. Two hotspots appear in the central band at maximum temperatures of approximately 5 degrees C and 27 degrees C (corresponding to 0 and 16 degreee C minimum temperatures.)  
+
+In the second panel, we see a violin plot with quartile lines of the distribution of snowfall values greater than 0 and less than 100 from 1981 to 2010. The snowfall distribution only appears to vary slightly year-to-year, with no clear long-term trends from this selection. In each year, we observe four nodes of common observations, corresponding to half-inch, one inch, two inch, and three inch recordings. 
 
 
 
-*Make a two-panel plot showing (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); and (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.*
