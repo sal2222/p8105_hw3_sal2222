@@ -113,11 +113,11 @@ brfss %>%
 The table above shows the mean and standard deviation of the proportion of “Excellent” responses across locations in NY State. Nothing in particular stands out from the results. The highest proportion of "Excellent" responses occurred in 2002 (24.0%) and the lowest occurred in 2007 (21.1%).   
 
 
-*For each year and state, compute the average proportion in each response category (taking the average across locations in a state). Make a five-panel plot that shows, for each response category separately, the distribution of these state-level averages over time*
+*For each year and state, compute the average proportion in each response category (taking the average across locations in a state). Make a five-panel plot that shows, for each response category separately, the distribution of these state-level averages over time.*
 
 ```{r BFRSS five panel plot, warning = FALSE}
 
-brfss %>% 
+brfss_state_avg.p <- brfss %>% 
   select(-county) %>% 
   group_by(year, state) %>% 
   summarise_all(funs(mean = "mean")) %>% 
@@ -141,6 +141,10 @@ brfss %>%
     theme(legend.position = "none", 
           axis.text.x = element_text(size = 5))
 
+brfss_state_avg.p
+
+ggsave(filename = "brfss_state_avg.p.png", plot = brfss_state_avg.p)
+
 ```
 
 
@@ -160,7 +164,7 @@ instacart
 ```
 
 
-This Instacart Online Grocery Shopping 2017 dataset comes from an anonymized dataset with over 3 million online grocery orders from more than 200,000 Instacart users. This version of the data contains `r nrow(instacart) %>% format(big.mark=",")` observations of products in the orders. There are `r ncol(instacart)` variables in this dataset that describe order, product, and customer identifiers, the order in which the item was added to a user's cart, whether the product had been previously ordered by the user, the order sequence from the user, the hour and day of the week the order was placed, day since prior order, as well as product name, aisle, and department information. Our data contains `r instacart %>% summarize(n_distinct = n_distinct(order_id)) %>% format(big.mark=",")` unique orders for `r instacart %>% summarize(n_distinct = n_distinct(product_id)) %>% format(big.mark=",")` unique products. The average number of items in an order was `r instacart %>% group_by(order_id) %>% summarize(n = n()) %>% summarize(mean = mean(n)) %>% round(digits = 2)`.   
+This Instacart Online Grocery Shopping 2017 dataset comes from an anonymized dataset with over 3 million online grocery orders from more than 200,000 Instacart users. This version of the data contains `r nrow(instacart) %>% format(big.mark=",")` observations of products in the orders. There are `r ncol(instacart)` variables in this dataset that describe order, product, and customer identifiers, the order in which the item was added to a user's cart, whether the product had been previously ordered by the user, the order sequence from the user, the hour and day of the week the order was placed, day since prior order, as well as product name, aisle, and department information. Our data contains `r instacart %>% summarize(n_distinct = n_distinct(order_id))` unique orders for `r instacart %>% summarize(n_distinct = n_distinct(product_id))` unique products. The average number of items in an order was `r instacart %>% group_by(order_id) %>% summarize(n = n()) %>% summarize(mean = mean(n)) %>% round(digits = 2)`.   
 
 
 *How many aisles are there, and which aisles are the most items ordered from?*
@@ -327,6 +331,8 @@ tmax_jan_jul_p <- ny_noaa %>%
     scale_x_continuous(breaks = c(1980, 1985, 1990, 1995, 2000, 2005, 2010)) +
     theme(legend.position = "none")
 
+tmax_jan_jul_p
+
 ggsave(filename = "tmax_jan_jul_p.png", plot = tmax_jan_jul_p)
   
 ```
@@ -336,7 +342,7 @@ There is not an apparant long-term trend in the January or July mean maximum tem
 
 *Make a two-panel plot showing (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option);and (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.*
 
-```{r noaa two panel full data, warning = FALSE}
+```{r noaa two panel full data, warning = FALSE, fig.height = 12}
 
 tmax_tmin_p <- ny_noaa %>% 
   select(-(c("prcp", "snow", "snwd"))) %>% 
@@ -363,6 +369,8 @@ snow_p <- ny_noaa %>%
     theme(axis.text.x = element_text(angle = 90, size = 10))
 
 tmax_tmin_snow_p <- tmax_tmin_p / snow_p
+
+tmax_tmin_snow_p
 
 ggsave(filename = "tmax_tmin_snow_p.png", plot = tmax_tmin_snow_p)
 
